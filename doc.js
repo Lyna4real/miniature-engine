@@ -1,67 +1,111 @@
+
+//to get the computer choice
+
 function getCompChoice(){
     const options=["rock","paper","scissors"];
     let aValue=Math.floor(Math.random()*options.length);
     let compPick=options[aValue];
     return(compPick);
 }
-function getHumanChoice(){
-    let humanInput=window.prompt("Pick rock, paper or scissors. You'll have 5 rounds against the computer. Good luck.").toLowerCase();
-    let humanPick=""
-    if(humanInput==="rock"){
-        humanPick="rock";
-    } else if(humanInput==="paper"){
-        humanPick="paper";
-    } else if(humanInput==="scissors"){
-        humanPick="scissors"
-    } else{
-        console.log("That's not funny btw, please choose an available option :( ")
-        humanPick="";
-    }
-    console.log(humanPick);
-    return(humanPick);
-}
 
 
-function playGame(){
+
 let humanScore=0;
 let compScore=0;
-function playRound (humanChoice, compChoice){
-    if(humanChoice===compChoice){
-        console.log("tie! both of you picked the same thing.");
-    } else if((humanChoice==="rock"&& compChoice==="scissors" )|| (humanChoice==="paper"&&compChoice==="rock" )||( humanChoice==="scissors"&&compChoice==="paper")){
-        console.log(`you won this round! you picked ${humanChoice} and computer picked ${compChoice}`);
+
+//DOM references
+
+let textContainer=document.querySelector('div');
+let text= document.createElement('p');
+let finalWinnerText=document.createElement('p');
+textContainer.append(finalWinnerText);
+let body=document.querySelector("body");
+let rockChoice=document.querySelector(".r");
+let paperChoice=document.querySelector(".p");
+let scissorsChoice=document.querySelector(".s");
+let resetBtn=document.createElement('button');
+resetBtn.textContent="Reset";
+
+
+function playRound(playerSelection){
+
+    getCompChoice();
+    let compChoice=getCompChoice();
+    
+    if(playerSelection===compChoice){
+        console.log(`you chose ${playerSelection} and computer chose ${compChoice}`);
+        text.textContent=`Tie! Both you and the computer chose ${playerSelection}.`;
+        textContainer.append(text);
+        console.log(`computer got ${compScore}`);
+        console.log(`human got ${humanScore}`)
+    } else if(playerSelection==="rock"&&compChoice==="scissors"|| playerSelection==="scissors" && compChoice==="paper" || playerSelection==="paper"&&compChoice==="rock"){
+        console.log(`you chose ${playerSelection} and computer chose ${compChoice}`);
+        text.textContent=`Congrats! ${playerSelection} beats ${compChoice}`
+        textContainer.append(text);
         humanScore++;
-    } else if((humanChoice==="scissors"&& compChoice==="rock")||(humanChoice==="rock"&&compChoice==="paper")||(humanChoice==="paper"&&compChoice==="scissors")){
-        console.log(`you lose this round:( you picked ${humanChoice} and computer picked ${compChoice}`);
+        console.log(`computer got ${compScore}`);
+        console.log(`human got ${humanScore}`)
+    } else{
+        console.log(`you chose ${playerSelection} and computer chose ${compChoice}`);
+        text.textContent=`You lose :( ${playerSelection} is beaten by ${compChoice}`;
+        textContainer.append(text);
         compScore++;
+        console.log(`computer got ${compScore}`);
+        console.log(`human got ${humanScore}`)
+    }
+
+// to stop when one reaches 5 pts
+    if(humanScore===5){
+    let buttons=document.querySelectorAll('.r,.p, .s');
+    buttons.forEach(button => {
+        button.disabled=true;
+    });
+    text.textContent="";
+    finalWinnerText.innerText=`You won this game! Congratulations! \n final score: \n You: ${humanScore} ; Computer: ${compScore}`;
+    body.append(resetBtn);
+
+        function resetting (){
+            humanScore=0;
+            compScore=0;
+            text.textContent="";
+            finalWinnerText.textContent="";
+            resetBtn.remove();
+            let buttons=document.querySelectorAll('.r,.p, .s');
+            buttons.forEach(button => {
+            button.disabled=false;
+            })
+        }
+
+    resetBtn.addEventListener('click',()=> resetting ())
+    return
+    } else if(compScore===5){
+    let buttons=document.querySelectorAll('.r,.p, .s');
+    buttons.forEach(button => {
+    button.disabled=true;
+    });
+    text.textContent="";
+    finalWinnerText.innerText=`You lost this game :( \n Final score: \n You: ${humanScore} ; Computer: ${compScore} \n That's okay, you can try again.`;
+    body.append(resetBtn);
+
+        function resetting (){
+            text.textContent="";
+            finalWinnerText.textContent="";
+            humanScore=0;
+            compScore=0;
+            resetBtn.remove();
+            let buttons=document.querySelectorAll('.r,.p, .s');
+            buttons.forEach(button => {
+            button.disabled=false;
+            });
+        }
+        
+    resetBtn.addEventListener('click',()=> resetting ())
+    return
     }
 }
-let humanSelection=getHumanChoice();
-let compSelection=getCompChoice();
-playRound(humanSelection, compSelection);
-console.log(`You:${humanScore}, Computer:${compScore}`);
-let humanSelection1=getHumanChoice();
-let compSelection1=getCompChoice();
-playRound(humanSelection1, compSelection1);
-console.log(`You:${humanScore}, Computer:${compScore}`);
-let humanSelection2=getHumanChoice();
-let compSelection2=getCompChoice();
-playRound(humanSelection2, compSelection2);
-console.log(`You:${humanScore}, Computer:${compScore}`);
-let humanSelection3=getHumanChoice();
-let compSelection3=getCompChoice();
-playRound(humanSelection3, compSelection3);
-console.log(`You:${humanScore}, Computer:${compScore}`);
-let humanSelection4=getHumanChoice();
-let compSelection4=getCompChoice();
-playRound(humanSelection4, compSelection4);
-console.log(`FINAL SCORE! You:${humanScore}, Computer:${compScore}`);
-if(humanScore>compScore){
-    console.log('You won the game! you won most rounds! congrats!')
-} else if(humanScore<compScore){
-    console.log('You lost the game :( you lost most rounds... Try again!')
-} else{
-    console.log("It's all a tie! none of you won!")
-}
-}
-playGame();
+
+
+rockChoice.addEventListener("click", ()=> playRound("rock"));
+paperChoice.addEventListener("click", ()=> playRound("paper"));
+scissorsChoice.addEventListener("click", ()=> playRound("scissors"));
+
